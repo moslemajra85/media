@@ -1,22 +1,40 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUsers } from '../store';
+import { fetchUsers, addUser } from '../store';
 import Skeleton from './Skeleton';
+import Button from './Button';
+import { faker } from '@faker-js/faker';
 
 const UsersList = () => {
-  const { isLoading, data, error } = useSelector((state) => state.users);
-
+  const [isLoadingUser, setIsLoadingUser] = useState(false);
+  const [loadingUserError, setLoadingUserError] = useState(null);
+  const { data } = useSelector((state) => state.users);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchUsers());
+    setIsLoadingUser(true);
+    dispatch(fetchUsers())
+      .unwrap()
+      .then(() => setIsLoadingUser(false))
+      .catch((error) => {
+        setLoadingUserError(error);
+        setIsLoadingUser(false);
+      });
   }, []);
 
-  if (isLoading) {
+  const handleAddUser = () => {
+    dispatch(
+      addUser({
+        name: faker.person.firstName(),
+      })
+    );
+  };
+
+  if (isLoadingUser) {
     return <Skeleton times={6} className="h-10 w-full" />;
   }
 
-  if (error) {
+  if (loadingUserError) {
     return <div>Error Fetching Data...</div>;
   }
 
@@ -30,7 +48,17 @@ const UsersList = () => {
     );
   });
 
-  return <div>{renderedUsers}</div>;
+  return (
+    <div>
+      <div className="flex p-2 justify-between items-center">
+        <p className="text-xl">Users</p>
+        <Button primary onClick={handleAddUser}>
+          Add User
+        </Button>
+      </div>
+      {renderedUsers}
+    </div>
+  );
 };
 
 export default UsersList;

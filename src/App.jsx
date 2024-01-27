@@ -1,10 +1,13 @@
 import UsersList from './components/UsersList';
-
+import Header from './components/Header';
 const App = () => {
   return (
-    <div className="container mx-auto">
-      <UsersList />
-    </div>
+    <>
+      <Header text="Media App" />
+      <div className="container mx-auto">
+        <UsersList />
+      </div>
+    </>
   );
 };
 
