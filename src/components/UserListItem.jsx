@@ -4,7 +4,7 @@ import { RiDeleteBin2Fill } from 'react-icons/ri';
 import { MdArrowDropDown } from 'react-icons/md';
 
 const UserListItem = ({ user }) => {
-  const [doDeleteUser] = useThunk(deleteUser);
+  const [doDeleteUser, isLoading, error] = useThunk(deleteUser);
 
   const handleDeleteUser = (user) => {
     doDeleteUser(user);
@@ -20,6 +20,7 @@ const UserListItem = ({ user }) => {
             size={20}
             cursor="pointer"
           />{' '}
+          {error && <div>Error deleting user...</div>}
           {user.name}
         </div>
         <MdArrowDropDown
