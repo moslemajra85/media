@@ -1,40 +1,30 @@
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { fetchUsers, addUser } from '../store';
 import Skeleton from './Skeleton';
 import Button from './Button';
 import { faker } from '@faker-js/faker';
+import { useThunk } from '../hooks/useThunk';
 
 const UsersList = () => {
-  const [isLoadingUser, setIsLoadingUser] = useState(false);
-  const [loadingUserError, setLoadingUserError] = useState(null);
+  const [doFetchUsers, isLoadingUsers, loadingUsersError] =
+    useThunk(fetchUsers);
+  const [doCreateUser, isCreatingUser, errorCreatingUser] = useThunk(addUser);
   const { data } = useSelector((state) => state.users);
-  const dispatch = useDispatch();
 
   useEffect(() => {
-    setIsLoadingUser(true);
-    dispatch(fetchUsers())
-      .unwrap()
-      .then(() => setIsLoadingUser(false))
-      .catch((error) => {
-        setLoadingUserError(error);
-        setIsLoadingUser(false);
-      });
-  }, []);
+    doFetchUsers();
+  }, [doFetchUsers]);
 
   const handleAddUser = () => {
-    dispatch(
-      addUser({
-        name: faker.person.firstName(),
-      })
-    );
+    doCreateUser({ name: faker.person.firstName() });
   };
 
-  if (isLoadingUser) {
+  if (isLoadingUsers) {
     return <Skeleton times={6} className="h-10 w-full" />;
   }
 
-  if (loadingUserError) {
+  if (loadingUsersError) {
     return <div>Error Fetching Data...</div>;
   }
 
@@ -52,9 +42,16 @@ const UsersList = () => {
     <div>
       <div className="flex p-2 justify-between items-center">
         <p className="text-xl">Users</p>
-        <Button primary onClick={handleAddUser}>
-          Add User
-        </Button>
+
+        {isCreatingUser ? (
+          'creating user...'
+        ) : (
+          <Button primary onClick={handleAddUser}>
+            Add User
+          </Button>
+        )}
+
+        {errorCreatingUser && 'Error creating user...'}
       </div>
       {renderedUsers}
     </div>
