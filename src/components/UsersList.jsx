@@ -37,8 +37,8 @@ const UsersList = () => {
     <div>
       <div className="flex p-2 justify-between items-center">
         <p className="text-xl">Users</p>
-        <Button loading={isCreatingUser} primary onClick={handleAddUser}>
-          Add User
+        <Button loading={isCreatingUser}  onClick={handleAddUser}>
+          +Add User
         </Button>
       </div>
 
