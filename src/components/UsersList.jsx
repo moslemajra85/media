@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { fetchUsers, addUser } from '../store';
 import Skeleton from './Skeleton';
@@ -42,16 +42,9 @@ const UsersList = () => {
     <div>
       <div className="flex p-2 justify-between items-center">
         <p className="text-xl">Users</p>
-
-        {isCreatingUser ? (
-          'creating user...'
-        ) : (
-          <Button primary onClick={handleAddUser}>
-            Add User
-          </Button>
-        )}
-
-        {errorCreatingUser && 'Error creating user...'}
+        <Button loading={isCreatingUser} primary onClick={handleAddUser}>
+          Add User
+        </Button>
       </div>
       {renderedUsers}
     </div>
