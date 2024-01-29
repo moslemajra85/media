@@ -7,11 +7,11 @@ export const useThunk = (thunk) => {
   const dispatch = useDispatch();
 
   const runThunk = useCallback(
-    (arg = null) => {
+    (arg) => {
       setIsLoading(true);
       dispatch(thunk(arg))
         .unwrap()
-        .catch(() => {
+        .catch((error) => {
           setError(error);
         })
         .finally(() => {
